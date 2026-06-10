@@ -6,24 +6,19 @@ workflows:
       java: 17
 
     scripts:
-      # Install dependencies
       - name: Install dependencies
         script: |
-          npm install -g pnpm
-          pnpm install
+          npm install
 
-      # Build Next.js
       - name: Build Next.js
         script: |
-          pnpm run build
-          pnpm next export
+          npm run build
+          npx next export
 
-      # Sync Capacitor
       - name: Sync Capacitor
         script: |
           npx cap sync android
 
-      # Build Android APK
       - name: Build Android APK
         script: |
           cd android
