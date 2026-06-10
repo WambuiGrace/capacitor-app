@@ -4,7 +4,6 @@ workflows:
     environment:
       node: latest
       java: 17
-      android: latest
 
     scripts:
       # Install dependencies
@@ -29,6 +28,7 @@ workflows:
         script: |
           cd android
           ./gradlew assembleRelease
+          cd ..
 
     artifacts:
       - android/app/build/outputs/**/*.apk
