@@ -17,7 +17,9 @@ workflows:
       - name: Prepare static output for Capacitor
         script: |
           rm -rf out
-          cp -R .next out
+          mkdir out
+          cp -R .next/static/export/* out
+
 
       - name: Sync Capacitor
         script: |
