@@ -13,7 +13,11 @@ workflows:
       - name: Build Next.js
         script: |
           npm run build
-          npx next export
+
+      - name: Prepare static output for Capacitor
+        script: |
+          rm -rf out
+          cp -R .next out
 
       - name: Sync Capacitor
         script: |
