@@ -34,3 +34,44 @@ workflows:
 
     artifacts:
       - android/app/build/outputs/**/*.apk
+
+  nextjs_capacitor_ios:
+    name: Build Next.js + Capacitor iOS
+    environment:
+      node: latest
+      xcode: latest
+
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install
+
+      - name: Build Next.js
+        script: |
+          npm run build
+
+      - name: Prepare static output for Capacitor
+        script: |
+          echo "Static output prepared: out/ directory ready"
+
+      - name: Add iOS platform if missing
+        script: |
+          if [ ! -d ios ]; then
+            npx cap add ios
+          fi
+
+      - name: Sync Capacitor
+        script: |
+          npx cap sync ios
+
+      - name: Build iOS app
+        script: |
+          xcodebuild -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO
+
+    artifacts:
+      - build/Build/Products/Release-iphoneos/*.app
