@@ -1,0 +1,53 @@
+workflows:
+  nextjs_capacitor_android_ios:
+    name: Build Next.js + Capacitor for Android & iOS
+    environment:
+      node: latest
+      java: 17
+      android: latest
+      xcode: latest
+
+    scripts:
+      # Install dependencies
+      - name: Install dependencies
+        script: |
+          npm install -g pnpm
+          pnpm install
+
+      # Build Next.js
+      - name: Build Next.js
+        script: |
+          pnpm run build
+          pnpm next export
+
+      # Sync Capacitor
+      - name: Sync Capacitor
+        script: |
+          npx cap sync
+
+      # Build Android APK
+      - name: Build Android APK
+        script: |
+          cd android
+          ./gradlew assembleRelease
+          cd ..
+
+      # Build iOS IPA
+      - name: Build iOS IPA
+        script: |
+          cd ios/App
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -archivePath build/App.xcarchive archive
+
+          xcodebuild \
+            -exportArchive \
+            -archivePath build/App.xcarchive \
+            -exportOptionsPlist ../../exportOptions.plist \
+            -exportPath build
+
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+      - ios/App/build/**/*.ipa
