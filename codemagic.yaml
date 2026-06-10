@@ -16,9 +16,9 @@ workflows:
 
       - name: Prepare static output for Capacitor
         script: |
-          rm -rf out
-          mkdir out
-          cp -R .next/static/export/* out
+          # Next.js with 'output: export' already creates the out/ directory
+          # No need to copy, the out/ directory is ready for Capacitor
+          echo "Static output prepared: out/ directory ready"
 
 
       - name: Sync Capacitor
