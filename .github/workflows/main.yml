@@ -35,7 +35,7 @@ jobs:
       - name: Build iOS app (unsigned - no code signing)
         run: |
           xcodebuild build \
-            -workspace ios/App/App.xcworkspace \
+            -project ios/App/App.xcodeproj \
             -scheme App \
             -configuration Debug \
             -sdk iphoneos \
@@ -49,7 +49,7 @@ jobs:
           mkdir -p Payload
           
           # Copy the compiled .app bundle into Payload
-          cp -r build/Debug-iphoneos/App.app Payload/
+          cp -r ios/App/build/Debug-iphoneos/App.app Payload/
           
           # Zip the Payload directory to create the .ipa file
           zip -r app.ipa Payload/
