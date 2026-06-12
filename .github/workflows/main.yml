@@ -35,7 +35,7 @@ jobs:
       - name: Build iOS app (unsigned - no code signing)
         run: |
           xcodebuild build \
-            -workspace ios/App/App.xcworkspace \
+            -project ios/App/App.xcodeproj \
             -scheme App \
             -configuration Debug \
             -sdk iphoneos \
