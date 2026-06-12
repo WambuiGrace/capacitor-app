@@ -1,0 +1,65 @@
+name: Build iOS App (Unsigned)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-ios-unsigned:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build web assets
+        run: npm run build
+
+      - name: Sync web assets to iOS platform
+        run: npx cap sync ios
+
+      - name: Build iOS app (unsigned - no code signing)
+        run: |
+          xcodebuild build \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphoneos \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CONFIGURATION_BUILD_DIR=build/Debug-iphoneos
+
+      - name: Package compiled app into .ipa
+        run: |
+          # Create the Payload directory structure required by .ipa format
+          mkdir -p Payload
+          
+          # Copy the compiled .app bundle into Payload
+          cp -r build/Debug-iphoneos/App.app Payload/
+          
+          # Zip the Payload directory to create the .ipa file
+          zip -r app.ipa Payload/
+          
+          # Clean up temporary Payload directory
+          rm -rf Payload
+
+      - name: Upload unsigned .ipa as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-ios-app
+          path: app.ipa
+          retention-days: 30
