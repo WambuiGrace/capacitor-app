@@ -32,9 +32,6 @@ jobs:
       - name: Sync web assets to iOS platform
         run: npx cap sync ios
 
-      - name: Add iOS platform to Capacitor
-        run: npx cap add ios
-
       - name: Build iOS app (unsigned - no code signing)
         run: |
           xcodebuild build \
